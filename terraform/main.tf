@@ -81,3 +81,62 @@ resource "aws_lambda_function" "create_event_lambda" {
     }
   }
 }
+
+resource "aws_apigatewayv2_api" "http_api" {
+  name          = "event-announcement-api"
+  protocol_type = "HTTP"
+}
+
+resource "aws_lambda_permission" "subscribe_api_permission" {
+  statement_id  = "AllowAPIGatewayInvokeSubscribe"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.subscribe_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.http_api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "create_event_api_permission" {
+  statement_id  = "AllowAPIGatewayInvokeCreateEvent"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.create_event_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.http_api.execution_arn}/*/*"
+}
+
+resource "aws_apigatewayv2_integration" "subscribe_integration" {
+  api_id           = aws_apigatewayv2_api.http_api.id
+  integration_type = "AWS_PROXY"
+  integration_uri  = aws_lambda_function.subscribe_lambda.invoke_arn
+  integration_method = "POST"
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_integration" "create_event_integration" {
+  api_id           = aws_apigatewayv2_api.http_api.id
+  integration_type = "AWS_PROXY"
+  integration_uri  = aws_lambda_function.create_event_lambda.invoke_arn
+  integration_method = "POST"
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "subscribe_route" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "POST /subscribe"
+  target    = "integrations/${aws_apigatewayv2_integration.subscribe_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "create_event_route" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "POST /create-event"
+  target    = "integrations/${aws_apigatewayv2_integration.create_event_integration.id}"
+}
+
+resource "aws_apigatewayv2_stage" "default" {
+  api_id      = aws_apigatewayv2_api.http_api.id
+  name        = "$default"
+  auto_deploy = true
+}
+
+output "api_base_url" {
+  value = aws_apigatewayv2_stage.default.invoke_url
+}
