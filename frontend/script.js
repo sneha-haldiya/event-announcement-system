@@ -1,4 +1,4 @@
-const API_BASE_URL = ""; // this will come from terraform when backend deploys
+const API_BASE_URL = "https://hghxdtdl59.execute-api.ap-south-1.amazonaws.com"; //got this url after deployment
 
 document.getElementById("subscribe-form").addEventListener("submit", async (e) => {
     e.preventDefault();
