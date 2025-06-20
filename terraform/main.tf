@@ -85,6 +85,12 @@ resource "aws_lambda_function" "create_event_lambda" {
 resource "aws_apigatewayv2_api" "http_api" {
   name          = "event-announcement-api"
   protocol_type = "HTTP"
+
+  cors_configuration {
+    allow_origins = ["*"]
+    allow_methods = ["GET", "POST", "OPTIONS"]
+    allow_headers = ["*"]
+  }
 }
 
 resource "aws_lambda_permission" "subscribe_api_permission" {

@@ -25,6 +25,11 @@ def lambda_handler(event, context):
 
         return {
             "statusCode": 200,
+            "headers": {
+                "Access-Control-Allow-Origin": "*", # Allow all domains
+                "Access-Control-Allow-Methods": "OPTIONS,POST",
+                "Access-Control-Allow-Headers": "*"
+            },
             "body": json.dumps({"message": "Subscription request sent! Please confirm in your inbox."})
         }
 
