@@ -1,6 +1,7 @@
 import json
 import boto3
 import os
+import traceback
 
 s3 = boto3.client('s3')
 sns = boto3.client('sns')
@@ -16,7 +17,14 @@ def lambda_handler(event, context):
         # Load existing events
         try:
             data = s3.get_object(Bucket=BUCKET, Key=FILE_NAME)
-            events = json.loads(data['Body'].read())
+            try:
+                raw_data = data['Body'].read()
+                events = json.loads(raw_data) if raw_data.strip() else []
+            except s3.exceptions.NoSuchKey:
+                events = []
+            except json.JSONDecodeError:
+                events = []
+
         except s3.exceptions.NoSuchKey:
             events = []
 
@@ -44,7 +52,16 @@ def lambda_handler(event, context):
         }
 
     except Exception as e:
+        print("ERROR:", traceback.format_exc())
         return {
             "statusCode": 500,
-            "body": json.dumps({"error": str(e)})
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "OPTIONS,POST",
+                "Access-Control-Allow-Headers": "*"
+            },
+            "body": json.dumps({
+                "error": str(e),
+                "trace": traceback.format_exc()
+            })
         }
