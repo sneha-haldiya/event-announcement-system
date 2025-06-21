@@ -1,5 +1,20 @@
 const API_BASE_URL = "https://hghxdtdl59.execute-api.ap-south-1.amazonaws.com"; //got this url after deployment
 
+document.addEventListener("DOMContentLoaded", () => {
+    const today = new Date().toISOString().split("T")[0];
+    document.getElementById("date").setAttribute("min", today);
+});
+
+function showToast(message, duration = 3000) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, duration);
+}
+
 document.getElementById("subscribe-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("email").value;
@@ -12,9 +27,10 @@ document.getElementById("subscribe-form").addEventListener("submit", async (e) =
     });
 
     if (res.ok) {
-        alert("Subscribed successfully!");
+        showToast("Subscribed successfully!");
+        document.getElementById("subscribe-form").reset();
     } else {
-        alert("Subscription failed.");
+        showToast("Subscription failed.");
     }
 });
 document.getElementById("event-form").addEventListener("submit", async (e) => {
@@ -33,8 +49,9 @@ document.getElementById("event-form").addEventListener("submit", async (e) => {
     });
 
     if (res.ok) {
-        alert("Event submitted successfully!");
+        showToast("Event submitted successfully!");
+        document.getElementById("event-form").reset();
     } else {
-        alert("Failed to submit event.");
+        showToast("Failed to submit event.");
     }
 });
