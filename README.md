@@ -1,4 +1,4 @@
-#📅 Event Announcement System
+## 📅 Event Announcement System
 
 A fully serverless, event-driven web application that enables users to submit event announcements via a simple web form. The submitted events are stored in an S3 bucket and broadcast to all subscribed users using Amazon SNS. All backend logic is handled by AWS Lambda functions triggered via API Gateway.
 
