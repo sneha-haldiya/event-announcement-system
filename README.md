@@ -1,4 +1,4 @@
-# Event Announcement System
+#📅 Event Announcement System
 
 A fully serverless, event-driven web application that enables users to submit event announcements via a simple web form. The submitted events are stored in an S3 bucket and broadcast to all subscribed users using Amazon SNS. All backend logic is handled by AWS Lambda functions triggered via API Gateway.
 
@@ -15,15 +15,14 @@ A fully serverless, event-driven web application that enables users to submit ev
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
- **Frontend:** HTML, CSS, JavaScriptAdd commentMore actions
+- **Frontend:** HTML, CSS, JavaScript
 - **Backend:** AWS Lambda (Python)
 - **API Gateway:** REST API (Lambda Proxy Integration)
 - **Storage:** Amazon S3 (event data in JSON)
 - **Notifications:** Amazon SNS (email/SMS subscribers)
 - **Infrastructure as Code:** Terraform
-- **CI/CD:** GitHub Actions
 
 ---
 
